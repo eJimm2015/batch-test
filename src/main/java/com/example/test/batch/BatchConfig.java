@@ -6,6 +6,7 @@ import com.example.test.model.Header;
 import com.example.test.model.Input;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -13,26 +14,17 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
-import org.springframework.batch.item.support.ClassifierCompositeItemProcessor;
-import org.springframework.batch.item.support.ClassifierCompositeItemWriter;
-import org.springframework.batch.item.support.builder.ClassifierCompositeItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.classify.Classifier;
 import org.springframework.classify.SubclassClassifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +57,7 @@ public class BatchConfig {
                 .writer(itemWriter())
                 .build();
     }
-
+/*
     @Bean
     public ItemProcessor<Header, Header> headerProcessor() {
         return h -> {
@@ -78,38 +70,54 @@ public class BatchConfig {
         };
     }
 
+ */
+
     @Bean
-    public ItemProcessor<Data, Data> dataProcessor() {
+    public HeaderProcessor headerProcessor() {
+/*
+        return h -> {
+            System.out.println("Header processor : " + h);
+            return h;
+        };
+
+ */
+
+        return new HeaderProcessor();
+    }
+
+    @Bean
+    public DataProcessor dataProcessor() {
+        /*
         return d -> {
             // TODO perform any validation
             // TODO store total in context
             System.out.println("Data processor : " + d);
             return d;
         };
+
+         */
+        return new DataProcessor();
     }
 
     @Bean
-    public ItemProcessor<Footer, Footer> footerProcessor() {
+    public FooterProcessor footerProcessor() {
+        /*
         return f -> {
             // TODO perform any validation
             // TODO store total in context
             System.out.println("Footer processor : " + f);
             return f;
         };
+
+         */
+        return new FooterProcessor();
     }
 
     @Bean
-    public ClassifierCompositeItemProcessor<Input, Input> itemProcessor() {
-        ClassifierCompositeItemProcessor<Input, Input> itemProcessor = new ClassifierCompositeItemProcessor<>();
-        itemProcessor.setClassifier(new SubclassClassifier<>(Map.of(
-                Header.class,
-                headerProcessor(),
-                Data.class,
+    public CompositeInputProcessor itemProcessor() {
+        return new CompositeInputProcessor(headerProcessor(),
                 dataProcessor(),
-                Footer.class,
-                footerProcessor()),
-                dataProcessor()));
-        return itemProcessor;
+                footerProcessor());
     }
 
     @Bean
@@ -124,10 +132,16 @@ public class BatchConfig {
 
     @Bean
     public ItemWriter<Input> footerWriter() {
+        //return new FlatFileItemWriter<Footer>();
         return f -> System.out.println("Footer Item Writer : " + f);
     }
 
+    @Bean
+    public ItemWriter<Input> itemWriter() {
+        return new InputWriter();
+    }
 
+    /*
     @Bean
     public ClassifierCompositeItemWriter<Input> itemWriter() {
         ClassifierCompositeItemWriter<Input> itemWriter = new ClassifierCompositeItemWriter<>();
@@ -142,6 +156,8 @@ public class BatchConfig {
         return itemWriter;
     }
 
+     */
+
     @Bean
     public FlatFileItemReader<Input> itemReader() {
 
@@ -153,9 +169,8 @@ public class BatchConfig {
     }
 
     @Bean
-    public PatternMatchingCompositeLineMapper<Input> orderFileLineMapper() {
-        PatternMatchingCompositeLineMapper<Input> lineMapper =
-                new PatternMatchingCompositeLineMapper<>();
+    public InputMapper orderFileLineMapper() {
+        InputMapper lineMapper = new InputMapper();
 
         Map<String, LineTokenizer> tokenizers = new HashMap<>(3);
         tokenizers.put("0*", headerTokenizer());

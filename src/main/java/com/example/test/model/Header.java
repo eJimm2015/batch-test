@@ -2,7 +2,7 @@ package com.example.test.model;
 
 import java.util.Objects;
 
-public class Header implements Input {
+public class Header extends Input {
     private String label;
     private String date;
 
@@ -32,8 +32,8 @@ public class Header implements Input {
 
     @Override
     public String toString() {
-        return "Header = {" +
-                "label=" + label + ", " +
+        return "Header = {" + super.toString() +
+                ", label=" + label + ", " +
                 "date=" + date + '}';
     }
 

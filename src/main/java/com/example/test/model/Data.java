@@ -1,6 +1,6 @@
 package com.example.test.model;
 
-public class Data implements Input {
+public class Data extends Input {
 
     private String id;
     private String date;
@@ -40,8 +40,8 @@ public class Data implements Input {
 
     @Override
     public String toString() {
-        return "Data = {" +
-                "id=" + id + ", " +
+        return "Data = {" + super.toString() +
+                ", id=" + id + ", " +
                 "date=" + date + ", " +
                 "state=" + state + '}';
     }

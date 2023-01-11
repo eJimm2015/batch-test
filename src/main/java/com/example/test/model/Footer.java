@@ -1,6 +1,6 @@
 package com.example.test.model;
 
-public class Footer implements Input {
+public class Footer extends Input {
     private String state;
 
     public Footer() {
@@ -20,7 +20,7 @@ public class Footer implements Input {
 
     @Override
     public String toString() {
-        return "Footer = {" +
-                "state=" + state + "}";
+        return "Footer = {" + super.toString() +
+                ", state=" + state + "}";
     }
 }
