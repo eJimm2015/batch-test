@@ -6,10 +6,7 @@ import com.example.test.model.Header;
 import com.example.test.model.Input;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.support.ClassifierCompositeItemProcessor;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.classify.Classifier;
 import org.springframework.classify.SubclassClassifier;
 
 import java.util.Map;

@@ -1,6 +1,5 @@
 package com.example.test.batch;
 
-import com.example.test.model.Input;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ItemProcessor;
 
